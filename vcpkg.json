@@ -1,0 +1,11 @@
+{
+  "name": "matriarchglobalsettings",
+  "version-string": "version1",
+  "dependencies": [
+      "cxxopts",
+      "rtmidi",
+      "spdlog",
+      "boost-lexical-cast",
+      "boost-tokenizer"
+  ]
+}

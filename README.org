@@ -1,0 +1,104 @@
+#+TITLE:README
+#+AUTHOR:Jolyon Wright
+#+EMAIL:jolyon@Jolyons-MacBook-Pro.local
+# #+OPTIONS: toc:nil
+# #+OPTIONS: num:nil
+#+OPTIONS: author:nil date:nil
+#+OPTIONS: ^:nil
+
+#+OPTIONS: toc:20
+#+OPTIONS: author:nil date:nil
+#+HTML_HEAD: <style>pre.src {background-color: #303030; color: #e5e5e5;}</style>
+#+HTML_HEAD: <style>p.verse {background-color: #D1EEEE;}</style>
+
+#+LATEX: \setlength\parindent{0pt}
+#+LATEX: \parskip=12pt % adds vertical space between paragraphs
+#+LATEX_HEADER: \usepackage[inline]{enumitem}
+#+LATEX_HEADER: \usepackage{extsizes}
+#+LATEX_HEADER: \usepackage{xeCJK}
+#+LATEX_HEADER: \setlist[itemize]{noitemsep}
+#+LATEX_HEADER: \setlist[enumerate]{noitemsep}
+#+LATEX_HEADER: \usepackage[margin=1in]{geometry}
+#+LATEX_HEADER: \usepackage{graphicx,wrapfig,lipsum}
+#+LATEX_HEADER: \documentclass[a4paper,8pt]{article}
+
+#
+* Introduction
+This is a simple global settings editor for the Moog Matriarch with f/w revision [[https://www.moogmusic.com/news/new-firmware-available-grandmother-matriarch][1.2.3]].
+
+For a quick and easy life please try this https://mreid.github.io/matriarch-editor/ which looks fantastic.
+
+However I want to control the Matriarch from an embedded box with no web browser.  The primary objective was set parameter 25 to 1 so that the sequences would transition smoothly!
+
+Please note the following:-
+- Nothing will work without the firmware update.
+- The Matriarch should be connected over USB.
+- There is no attempt to validate the parameters.  Please refer to the sysex notes for valid values.
+- This is very much a means to an end; there are no aspirations of being a complete or useful.
+- Please be cautious updating the global settings; it is very straightforward to get your beautiful instrument in an incomprehensible state!
+
+* Usage
+** General
+Given no arguments the program will attempt to dump all the settings to the console.
+
+#+ATTR_HTML: :border 2 :rules all :frame border
+| flag   | meaning                                                         | example |
+|--------+-----------------------------------------------------------------+---------|
+| -q     | query                                                           | -q 25   |
+| -s p=v | set where p is the numeric parameter and v is the decimal value | -s 25=1 |
+
+The program will accept multiple arguments.  For example:-
+
+#+begin_src bash
+  matriarch_global_settings -q 25 -q 1
+#+end_src
+
+Will query both parameter 25 and parameter 1.
+
+Note:- the command line parsing will become confused by spaces, so to use spaces in the invocation quote it, for example:-
+
+#+begin_src bash
+  matriarch_global_settings -s "25 = 1"
+#+end_src
+
+** Important Note
+Before doing anything, consider making a note of the current state of the instrument:-
+
+#+begin_src bash
+  matriarch_global_settings > before_i_broke_it.log
+#+end_src
+
+This file can then be referred to if subsequent attempts to alter the settings do not work as expected.
+
+After getting your instrument into an incomprehensible state, retrieve the broken state:-
+
+#+begin_src bash
+  matriarch_global_settings > after_i_broke_it.log
+#+end_src
+
+Do a diff on the two files.  Use this diff as the basis for restoring the original state using:-
+
+#+begin_src bash
+  matriarch_global_settings -s broken_param1=before_i_broke_it_value1 -s broken_param2=before_i_broke_it_value2
+#+end_src
+
+* Building
+I have used this on:-
+- MacOs
+- Windows 10
+- Ubuntu 1804 (arm64)
+
+In all cases the build procedure is the same in principle.
+
+If you do not care about any of this stuff and just want to change parameter 25 to 1, take heart from the fact that Getting It To Work is easier than it has ever been.
+
+** Prerequisites
+- a C++ compiler that supports C++17
+- cmake (https://cmake.org/)
+- vcpkg (https://vcpkg.io/en/getting-started.html)
+** Procedure
+
+#+begin_src bash
+  cmake -B build .
+  cmake --build ./build
+#+end_src
